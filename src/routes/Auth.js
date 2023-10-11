@@ -6,6 +6,7 @@ const Auth = ()=>{
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [newAccount, setNewAccount] = useState(true);
+  const [error,setError] = useState('');
   const auth = getAuth();
 
   const onSubmit = (e)=>{
@@ -22,11 +23,23 @@ const Auth = ()=>{
           const errorCode = error.code;
           const errorMessage = error.message;
           console.log(errorCode, errorMessage);
+          setError(errorMessage);
         });
 
     }else{
       //로그인
-      
+      signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        // Signed in 
+        const user = userCredential.user;
+        console.log(user);
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log(errorCode, errorMessage);
+      });
+
     }
   }
   const onChange = (e) =>{
@@ -45,6 +58,7 @@ const Auth = ()=>{
         <input name="password" type="password" placeholder='password' value={password} onChange={onChange}/>
         <button>{newAccount ? "create Account" : "Login in"} </button>
       </form>
+      {error}
     </div>
   )
 }
