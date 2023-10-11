@@ -1,5 +1,4 @@
 import React, {useState} from 'react';
-import { authService } from '../firebase';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 
 const Auth = ()=>{
@@ -42,6 +41,7 @@ const Auth = ()=>{
 
     }
   }
+
   const onChange = (e) =>{
     // let name = e.target.value;
     const {target:{name, value}} = e;
@@ -59,6 +59,7 @@ const Auth = ()=>{
         <button>{newAccount ? "create Account" : "Login in"} </button>
       </form>
       {error}
+
     </div>
   )
 }
