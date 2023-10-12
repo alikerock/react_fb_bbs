@@ -47,7 +47,9 @@ const Home = ()=>{
       </form>
       <ul>
       {
-        posts.map(item=><li key={item.id}>{item.content}</li>)
+        posts.map(item=>
+          <Post key={item.id} postObj={item.content}></Post>
+        )
       }
       </ul>
     </div>
