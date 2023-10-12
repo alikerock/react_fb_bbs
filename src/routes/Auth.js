@@ -51,14 +51,22 @@ const Auth = ()=>{
       setPassword(value);
     }    
   }
+  const toggleAccount = () => setNewAccount((prev)=>!prev);
+
   return(
     <div>
       <form onSubmit={onSubmit}>
+        <p>
         <input name="email" type="email" placeholder='email' value={email} onChange={onChange}/>
         <input name="password" type="password" placeholder='password' value={password} onChange={onChange}/>
-        <button>{newAccount ? "create Account" : "Login in"} </button>
+        </p>
+        <button type="submit">{newAccount ? "계정생성" : "로그인"} </button>
+        <button type="button">{newAccount ? "구글로 계정 생성" : "구글로 로그인"}</button>
       </form>
+      <hr/>
+      <button type="button" onClick={toggleAccount}>{newAccount ? "로그인" : "계정생성"}</button>
       {error}
+
 
     </div>
   )
