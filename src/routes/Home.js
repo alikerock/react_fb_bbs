@@ -1,8 +1,9 @@
 import React,{useEffect, useState} from 'react';
 import { db } from '../firebase';
-import { collection, getDocs, addDoc, serverTimestamp } from "firebase/firestore"; 
+import {  doc, onSnapshot, query, orderBy, collection, getDocs, addDoc, serverTimestamp } from "firebase/firestore"; 
+import Post from '../components/Post';
 
-const Home = ()=>{
+const Home = (userObj)=>{
   const [post,setPost] = useState('');
   const [posts,setPosts] = useState([]);
   
@@ -17,13 +18,15 @@ const Home = ()=>{
     try{
         const docRef = await addDoc(collection(db, "posts"), {
           content: post,
-          date: serverTimestamp()
+          date: serverTimestamp(),
+          uid:userObj.userObj
         });
         console.log("Document written with ID: ", docRef.id);
       } catch(e){
       console.log(e);
     }
   }
+  /*
   const getPosts = async () =>{
     const querySnapshot = await getDocs(collection(db, "posts"));
     querySnapshot.forEach((doc) => {
@@ -34,11 +37,26 @@ const Home = ()=>{
       setPosts((prev)=>[postObj,...prev]);
     });
   }
+  */
 
   useEffect(()=>{
-    getPosts();
+    const q = query(collection(db, "posts"), orderBy('date'));
+    onSnapshot(q, (querySnapshot) => {
+      /*
+      const posts = [];
+      querySnapshot.forEach((doc) => {
+          cities.push(doc.data().name);
+      });
+      */
+      const postArr = querySnapshot.docs.map((doc)=>({
+        id:doc.id,
+        ...doc.data()
+      }));
+      setPosts(postArr);
+      console.log(postArr);
+    });
   },[])
-
+  
   return(
     <div>
       <form onSubmit={onSubmit}>
@@ -48,7 +66,7 @@ const Home = ()=>{
       <ul>
       {
         posts.map(item=>
-          <Post key={item.id} postObj={item.content}></Post>
+          <Post key={item.id} postObj={item}></Post>
         )
       }
       </ul>
