@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider,signInWithPopup  } from "firebase/auth";
 
 const Auth = ()=>{
   const [email, setEmail] = useState('');
@@ -52,7 +52,24 @@ const Auth = ()=>{
     }    
   }
   const toggleAccount = () => setNewAccount((prev)=>!prev);
+  const onSocialClick = () =>{
+    const provider = new GoogleAuthProvider();
+    signInWithPopup(auth, provider)
+      .then((result) => {        
+        const credential = GoogleAuthProvider.credentialFromResult(result);
+        const token = credential.accessToken;
+        const user = result.user;
+        console.log(token,user);
+      }).catch((error) => {
+        // Handle Errors here.
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        const email = error.customData.email;
+        const credential = GoogleAuthProvider.credentialFromError(error);
+        console.log(errorCode,errorMessage,email,credential);
+      });
 
+  }
   return(
     <div>
       <form onSubmit={onSubmit}>
@@ -61,7 +78,7 @@ const Auth = ()=>{
         <input name="password" type="password" placeholder='password' value={password} onChange={onChange}/>
         </p>
         <button type="submit">{newAccount ? "계정생성" : "로그인"} </button>
-        <button type="button">{newAccount ? "구글로 계정 생성" : "구글로 로그인"}</button>
+        <button type="button" onClick={onSocialClick}>{newAccount ? "구글로 계정 생성" : "구글로 로그인"}</button>
       </form>
       <hr/>
       <button type="button" onClick={toggleAccount}>{newAccount ? "로그인" : "계정생성"}</button>
