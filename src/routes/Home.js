@@ -10,6 +10,7 @@ const Home = (userObj)=>{
   const [post,setPost] = useState('');
   const [posts,setPosts] = useState([]);
   const [attachment, setAttachment] = useState();
+  let attachmentUrl = '';
   
 
   
@@ -22,25 +23,31 @@ const Home = (userObj)=>{
     e.preventDefault();
     const storage = getStorage();
     const storageRef = ref(storage, `${userObj.userObj}/${uuidv4()}`);
-
-    uploadString(storageRef, attachment, 'data_url').then(async (snapshot) => {
-
-      let attachmentUrl =await getDownloadURL(storageRef);
-
+    const makePost = async (url) =>{
       try{
         await addDoc(collection(db, "posts"), {
           content: post,
           date: serverTimestamp(),
           uid:userObj.userObj,
-          attachmentUrl
+          attachmentUrl:url
         });       
         attachmentUrl = '';
         
       } catch(e){
           console.log(e);
       }
+    }
+    if(attachment){      
+      uploadString(storageRef, attachment, 'data_url').then(async (snapshot) => {     
+        attachmentUrl =await getDownloadURL(storageRef);
+        makePost(attachmentUrl);
+      });
+    } else{
+      makePost(attachmentUrl);
+    }
 
-    });
+    
+
    
   }
   /*
