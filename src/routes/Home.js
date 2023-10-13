@@ -2,8 +2,9 @@ import React,{useEffect, useState} from 'react';
 import { db } from '../firebase';
 import { onSnapshot, query, orderBy, collection,  addDoc, serverTimestamp } from "firebase/firestore"; 
 import Post from '../components/Post';
-import { getStorage, ref, uploadString, getDownloadURL } from "firebase/storage";
+import { getStorage, ref, uploadString, getDownloadURL} from "firebase/storage";
 import { v4 as uuidv4 } from 'uuid';
+
 
 const Home = (userObj)=>{
   const [post,setPost] = useState('');
@@ -23,7 +24,8 @@ const Home = (userObj)=>{
     const storageRef = ref(storage, `${userObj.userObj}/${uuidv4()}`);
 
     uploadString(storageRef, attachment, 'data_url').then(async (snapshot) => {
-      const attachmentUrl = await getDownloadURL(storageRef);
+
+      let attachmentUrl =await getDownloadURL(storageRef);
 
       try{
         await addDoc(collection(db, "posts"), {
@@ -31,7 +33,9 @@ const Home = (userObj)=>{
           date: serverTimestamp(),
           uid:userObj.userObj,
           attachmentUrl
-        });      
+        });       
+        attachmentUrl = '';
+        
       } catch(e){
           console.log(e);
       }
