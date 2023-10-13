@@ -25,7 +25,7 @@ const Post = ({postObj,userConfirm})=>{
     {edit ? (
       <>
         <form onSubmit={onSubmit}>
-          <input value={postObj.content} onChange={onChange} required/>
+          <input value={newPost} onChange={onChange} required/>
           <button>Update Post</button>
         </form>
         <button onClick={toggleEditMode}>cancel</button>
