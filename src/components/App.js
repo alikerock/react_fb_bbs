@@ -14,8 +14,7 @@ function App() {
 
       onAuthStateChanged(auth, (user) => {
         if (user) {
-          setIsLoggedIn(true);
-          
+          setIsLoggedIn(true);          
           setUserObj(user.uid);
         } else {
           // User is signed out
