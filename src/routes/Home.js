@@ -2,7 +2,7 @@ import React,{useEffect, useState} from 'react';
 import { db } from '../firebase';
 import { onSnapshot, query, orderBy, collection,  addDoc, serverTimestamp } from "firebase/firestore"; 
 import Post from '../components/Post';
-import { getStorage, ref } from "firebase/storage";
+import { getStorage, ref, uploadString, getDownloadURL } from "firebase/storage";
 import { v4 as uuidv4 } from 'uuid';
 
 const Home = (userObj)=>{
@@ -21,18 +21,23 @@ const Home = (userObj)=>{
     e.preventDefault();
     const storage = getStorage();
     const storageRef = ref(storage, `${userObj.userObj}/${uuidv4()}`);
-    /*
-    try{
-        const docRef = await addDoc(collection(db, "posts"), {
+
+    uploadString(storageRef, attachment, 'data_url').then(async (snapshot) => {
+      const attachmentUrl = await getDownloadURL(storageRef);
+
+      try{
+        await addDoc(collection(db, "posts"), {
           content: post,
           date: serverTimestamp(),
-          uid:userObj.userObj
-        });
-        console.log("Document written with ID: ", docRef.id);
+          uid:userObj.userObj,
+          attachmentUrl
+        });      
       } catch(e){
-      console.log(e);
-    }
-    */
+          console.log(e);
+      }
+
+    });
+   
   }
   /*
   const getPosts = async () =>{
