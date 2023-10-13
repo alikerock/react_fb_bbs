@@ -1,11 +1,16 @@
 import React,{useEffect, useState} from 'react';
 import { db } from '../firebase';
-import {  doc, onSnapshot, query, orderBy, collection, getDocs, addDoc, serverTimestamp } from "firebase/firestore"; 
+import { onSnapshot, query, orderBy, collection,  addDoc, serverTimestamp } from "firebase/firestore"; 
 import Post from '../components/Post';
+import { getStorage, ref } from "firebase/storage";
+import { v4 as uuidv4 } from 'uuid';
 
 const Home = (userObj)=>{
   const [post,setPost] = useState('');
   const [posts,setPosts] = useState([]);
+  const [attachment, setAttachment] = useState();
+  
+
   
   const onChange = (e)=>{
     //const val = e.target.value; //ECMA Script 2012
@@ -14,7 +19,9 @@ const Home = (userObj)=>{
   }
   const onSubmit = async (e) =>{
     e.preventDefault();
-
+    const storage = getStorage();
+    const storageRef = ref(storage, `${userObj.userObj}/${uuidv4()}`);
+    /*
     try{
         const docRef = await addDoc(collection(db, "posts"), {
           content: post,
@@ -25,6 +32,7 @@ const Home = (userObj)=>{
       } catch(e){
       console.log(e);
     }
+    */
   }
   /*
   const getPosts = async () =>{
@@ -58,6 +66,18 @@ const Home = (userObj)=>{
   },[])
   const onFileChange = (e)=>{
     console.log(e.target.files[0]);
+    // const theFile = e.target.files[0];
+    const {target:{files}} =e;
+    const theFile = files[0];    
+    const reader = new FileReader();
+    reader.onloadend = (e) =>{      
+      setAttachment(e.target.result);
+    }
+    reader.readAsDataURL(theFile);
+  }
+  const onFileClear = () =>{
+    setAttachment(null);
+    document.querySelector('#attachment').value=null;
   }
   return(
     <div>
@@ -69,6 +89,12 @@ const Home = (userObj)=>{
         <p>
           <label htmlFor="attachment">첨부이미지:</label>
           <input type="file" onChange={onFileChange} id="attachment" accept='images/*'/>
+          {attachment && 
+            <div>
+              <img src={attachment} alt="" width="50" height="50"/>
+              <button type="button" onClick={onFileClear}>이미지 취소</button>
+            </div>
+          }
         </p>
         <input type="submit" value="입력"></input>
       </form>
