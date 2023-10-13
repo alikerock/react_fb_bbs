@@ -56,11 +56,20 @@ const Home = (userObj)=>{
       console.log(postArr);
     });
   },[])
-  
+  const onFileChange = (e)=>{
+    console.log(e.target.files[0]);
+  }
   return(
     <div>
       <form onSubmit={onSubmit}>
-        <input type="text" name="post" value={post} placeholder='포스트 쓰기' onChange={onChange}></input>
+        <p>
+          <label htmlFor="content">내용: </label>
+          <input type="text" id="content" name="post" value={post} placeholder='포스트 쓰기' onChange={onChange}></input>
+        </p>
+        <p>
+          <label htmlFor="attachment">첨부이미지:</label>
+          <input type="file" onChange={onFileChange} id="attachment" accept='images/*'/>
+        </p>
         <input type="submit" value="입력"></input>
       </form>
       <ul>
