@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { db } from "../firebase";
-import { doc, deleteDoc } from "firebase/firestore";
+import { doc, deleteDoc, updateDoc  } from "firebase/firestore";
 
 const Post = ({postObj,userConfirm})=>{
 
@@ -17,8 +17,13 @@ const Post = ({postObj,userConfirm})=>{
     const {target:{value}} = e;
     setNewPost(value);
   }
-  const onSubmit = (e) =>{
+  const onSubmit = async (e) =>{
     e.preventDefault();
+    const postRef = doc(db, "posts", postObj.id);
+    await updateDoc(postRef, {
+      content: newPost
+    });
+    setEdit(false);
   }
   return( 
   <li>
